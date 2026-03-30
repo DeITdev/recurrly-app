@@ -1,13 +1,19 @@
 {
   "expo": {
     "name": "recurrly-app",
-    "slug": "recurrly-app",
+    "slug": "recurrly",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "recurrlyapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "updates": {
+      "url": "https://u.expo.dev/8f4f3121-fd2e-4fc5-b08b-039eedba785f"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "ios": {
       "supportsTablet": true
     },
@@ -56,6 +62,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8f4f3121-fd2e-4fc5-b08b-039eedba785f"
+      }
+    },
+    "owner": "deit"
   }
 }
