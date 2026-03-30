@@ -6,7 +6,7 @@
     {
       "layers" : [
         {
-          "image-name" : "expo-symbol 2.svg",
+          "image-name" : "Assets/expo-symbol 2.svg",
           "name" : "expo-symbol 2",
           "position" : {
             "scale" : 1,
@@ -17,7 +17,7 @@
           }
         },
         {
-          "image-name" : "grid.png",
+          "image-name" : "Assets/grid.png",
           "name" : "grid"
         }
       ],

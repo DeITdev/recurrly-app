@@ -2,8 +2,13 @@ import { tabs } from "@/constants/data";
 import { colors, components } from "@/constants/theme";
 import clsx from "clsx";
 import { Tabs } from "expo-router";
-import { Image, View } from "react-native";
+import { Image, ImageSourcePropType, View } from "react-native";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+interface TabIconProps {
+  focused: boolean;
+  icon: ImageSourcePropType;
+}
 
 const tabBar = components.tabBar;
 
@@ -27,7 +32,7 @@ const TabLayout = () => {
         tabBarShowLabel: false,
         tabBarStyle: {
           position: 'absolute',
-          bottom: Math.max(insets.bottom, tabBar.horizontalInset),
+          bottom: Math.max(insets.bottom, tabBar.bottomInset),
           height: tabBar.height,
           marginHorizontal: tabBar.horizontalInset,
           borderRadius: tabBar.radius,
@@ -36,7 +41,7 @@ const TabLayout = () => {
           elevation: 0,
         },
         tabBarItemStyle: {
-          paddingVertical: tabBar.height / 2 - tabBar.iconFrame / 1.6
+          paddingVertical: tabBar.height / 2 - tabBar.iconFrame / tabBar.iconVerticalAdjust
         },
         tabBarIconStyle: {
           width: tabBar.iconFrame,
