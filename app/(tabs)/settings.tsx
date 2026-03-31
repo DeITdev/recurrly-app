@@ -9,10 +9,22 @@ const SafeAreaView = styled(RNSafeAreaView);
 export default function Settings() {
   const { user } = useUser();
   const { signOut } = useClerk();
+  const [isSigningOut, setIsSigningOut] = React.useState(false);
 
   const displayName = user?.firstName
     ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`
     : "User";
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Failed to sign out:", error);
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-background p-5">
@@ -43,9 +55,12 @@ export default function Settings() {
       {/* Sign out */}
       <Pressable
         className="sub-cancel mt-5"
-        onPress={() => signOut()}
+        onPress={handleSignOut}
+        disabled={isSigningOut}
       >
-        <Text className="sub-cancel-text">Sign out</Text>
+        <Text className="sub-cancel-text">
+          {isSigningOut ? "Signing out..." : "Sign out"}
+        </Text>
       </Pressable>
     </SafeAreaView>
   );

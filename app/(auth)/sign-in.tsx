@@ -23,6 +23,18 @@ export default function SignIn() {
   const isBusy = fetchStatus === "fetching";
   const canSubmit = emailAddress.trim().length > 0 && password.length > 0 && !isBusy;
 
+  const navigateAfterFinalize = (params: {
+    session?: { currentTask?: unknown } | null;
+    decorateUrl: (path: string) => string;
+  }) => {
+    if (params.session?.currentTask) {
+      console.log(params.session?.currentTask);
+      return;
+    }
+    const url = params.decorateUrl("/");
+    router.replace(url as Href);
+  };
+
   const handleSubmit = async () => {
     const { error } = await signIn.password({
       emailAddress: emailAddress.trim(),
@@ -36,16 +48,9 @@ export default function SignIn() {
 
     if (signIn.status === "complete") {
       await signIn.finalize({
-        navigate: ({ session, decorateUrl }) => {
-          if (session?.currentTask) {
-            console.log(session?.currentTask);
-            return;
-          }
-          const url = decorateUrl("/");
-          router.replace(url as Href);
-        },
+        navigate: navigateAfterFinalize,
       });
-    } else if (signIn.status === "needs_client_trust") {
+    } else if (signIn.status === "needs_second_factor") {
       const emailCodeFactor = signIn.supportedSecondFactors.find(
         (factor) => factor.strategy === "email_code"
       );
@@ -56,24 +61,21 @@ export default function SignIn() {
   };
 
   const handleVerify = async () => {
-    await signIn.mfa.verifyEmailCode({ code });
+    try {
+      await signIn.mfa.verifyEmailCode({ code });
 
-    if (signIn.status === "complete") {
-      await signIn.finalize({
-        navigate: ({ session, decorateUrl }) => {
-          if (session?.currentTask) {
-            console.log(session?.currentTask);
-            return;
-          }
-          const url = decorateUrl("/");
-          router.replace(url as Href);
-        },
-      });
+      if (signIn.status === "complete") {
+        await signIn.finalize({
+          navigate: navigateAfterFinalize,
+        });
+      }
+    } catch (error) {
+      console.error(JSON.stringify(error, null, 2));
     }
   };
 
   /* ─── Verification step ─── */
-  if (signIn.status === "needs_client_trust") {
+  if (signIn.status === "needs_second_factor") {
     return (
       <View className="auth-safe-area">
         <KeyboardAvoidingView

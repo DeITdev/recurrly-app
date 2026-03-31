@@ -40,27 +40,29 @@ export default function SignUp() {
       return;
     }
 
-    if (!error) {
-      await signUp.verifications.sendEmailCode();
-    }
+    await signUp.verifications.sendEmailCode();
   };
 
   const handleVerify = async () => {
-    await signUp.verifications.verifyEmailCode({ code });
+    try {
+      await signUp.verifications.verifyEmailCode({ code });
 
-    if (signUp.status === "complete") {
-      await signUp.finalize({
-        navigate: ({ session, decorateUrl }) => {
-          if (session?.currentTask) {
-            console.log(session?.currentTask);
-            return;
-          }
-          const url = decorateUrl("/");
-          router.replace(url as Href);
-        },
-      });
-    } else {
-      console.error("Sign-up attempt not complete:", signUp);
+      if (signUp.status === "complete") {
+        await signUp.finalize({
+          navigate: ({ session, decorateUrl }) => {
+            if (session?.currentTask) {
+              console.log(session?.currentTask);
+              return;
+            }
+            const url = decorateUrl("/");
+            router.replace(url as Href);
+          },
+        });
+      } else {
+        console.error("Sign-up attempt not complete:", signUp);
+      }
+    } catch (error) {
+      console.error(JSON.stringify(error, null, 2));
     }
   };
 
@@ -163,7 +165,7 @@ export default function SignUp() {
   return (
     <View className="auth-safe-area">
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" :undefined}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
       >
         <ScrollView
@@ -197,7 +199,7 @@ export default function SignUp() {
               <View className="flex-row gap-3">
                 <View className="auth-field flex-1">
                   <Text className="auth-label">First name</Text>
-<TextInput
+                  <TextInput
                     className="auth-input"
                     style={{ paddingHorizontal: 24, paddingVertical: 20 }}
                     value={firstName}
