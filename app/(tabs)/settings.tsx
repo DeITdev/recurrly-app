@@ -54,9 +54,10 @@ export default function Settings() {
 
       {/* Sign out */}
       <Pressable
-        className="sub-cancel mt-5"
+        className={`sub-cancel mt-5 ${isSigningOut ? "opacity-50" : ""}`}
         onPress={handleSignOut}
         disabled={isSigningOut}
+        accessibilityState={{ disabled: isSigningOut }}
       >
         <Text className="sub-cancel-text">
           {isSigningOut ? "Signing out..." : "Sign out"}

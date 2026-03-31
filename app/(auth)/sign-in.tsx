@@ -50,12 +50,15 @@ export default function SignIn() {
       await signIn.finalize({
         navigate: navigateAfterFinalize,
       });
-    } else if (signIn.status === "needs_second_factor") {
-      const emailCodeFactor = signIn.supportedSecondFactors.find(
+    } else if (signIn.status === "needs_second_factor" || signIn.status === "needs_client_trust") {
+      const emailCodeFactor = signIn.supportedSecondFactors?.find(
         (factor) => factor.strategy === "email_code"
       );
       if (emailCodeFactor) {
-        await signIn.mfa.sendEmailCode();
+        const { error } = await signIn.mfa.sendEmailCode();
+        if (error) {
+          console.error(JSON.stringify(error, null, 2));
+        }
       }
     }
   };
@@ -75,7 +78,7 @@ export default function SignIn() {
   };
 
   /* ─── Verification step ─── */
-  if (signIn.status === "needs_second_factor") {
+  if (signIn.status === "needs_second_factor" || signIn.status === "needs_client_trust") {
     return (
       <View className="auth-safe-area">
         <KeyboardAvoidingView
@@ -146,7 +149,12 @@ export default function SignIn() {
 
                 <Pressable
                   className="auth-secondary-button"
-                  onPress={() => signIn.mfa.sendEmailCode()}
+                  onPress={async () => {
+                    const { error } = await signIn.mfa.sendEmailCode();
+                    if (error) {
+                      console.error(JSON.stringify(error, null, 2));
+                    }
+                  }}
                   disabled={isBusy}
                 >
                   <Text className="auth-secondary-button-text">

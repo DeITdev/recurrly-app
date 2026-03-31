@@ -40,7 +40,11 @@ export default function SignUp() {
       return;
     }
 
-    await signUp.verifications.sendEmailCode();
+    const sendResult = await signUp.verifications.sendEmailCode();
+    if (sendResult.error) {
+      console.error(JSON.stringify(sendResult.error, null, 2));
+      return;
+    }
   };
 
   const handleVerify = async () => {
@@ -146,7 +150,12 @@ export default function SignUp() {
 
                 <Pressable
                   className="auth-secondary-button"
-                  onPress={() => signUp.verifications.sendEmailCode()}
+                  onPress={async () => {
+                    const { error } = await signUp.verifications.sendEmailCode();
+                    if (error) {
+                      console.error(JSON.stringify(error, null, 2));
+                    }
+                  }}
                   disabled={isBusy}
                 >
                   <Text className="auth-secondary-button-text">
